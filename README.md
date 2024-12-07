@@ -22,7 +22,7 @@ This is a Laravel-based CRUD (Create, Read, Update, Delete) application for mana
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/student-crud.git
+   git clone https://github.com/emaranalytics/student-crud.git
    cd student-crud
    ```
 
@@ -85,3 +85,20 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Screenshots
+
+### List of Students
+![List of Students](assets/list-of-student.png)
+
+### Add New Student
+![Add New Student](assets/add-new-student.png)
+
+### View Student Details
+![View Student Details](assets/view-student.png)
+
+### Edit Student Information
+![Edit Student Information](assets/edit-student.png)
+
+### Delete Student
+![Delete Student](assets/delete-student.png)
