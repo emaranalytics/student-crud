@@ -1,5 +1,5 @@
-# Use the official PHP image as base
-FROM php:8.2-apache
+# Use the official PHP image with FPM
+FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -9,16 +9,14 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    nginx
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# Enable Apache modules
-RUN a2enmod rewrite
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -29,11 +27,11 @@ WORKDIR /var/www
 # Copy existing application directory contents
 COPY . /var/www
 
+# Copy .env file
+COPY .env /var/www/.env
+
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www
-
-# Copy Apache configuration
-COPY apache2.conf /etc/apache2/sites-available/000-default.conf
 
 # Set permissions for storage and bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
@@ -60,8 +58,11 @@ RUN php artisan migrate --force
 # Change ownership of the entire application
 RUN chown -R www-data:www-data /var/www
 
-# Use the PORT environment variable in Apache configuration
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Expose port 8080
+EXPOSE 8080
+
+# Start Nginx and PHP-FPM
+CMD service nginx start && php-fpm
